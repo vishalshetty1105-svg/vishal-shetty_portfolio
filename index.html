@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishal Shetty // High-End Glassmorphism</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --obsidian: #0b0c10;
+            --cyan: #45f3ff;
+            --ultraviolet: #8a2be2;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--obsidian);
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* High-End Glassmorphism UI */
+        .glass-card {
+            background: rgba(11, 12, 16, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(69, 243, 255, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 20px rgba(69, 243, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.4s ease;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(69, 243, 255, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(69, 243, 255, 0.4);
+        }
+        
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 3D Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--ultraviolet) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title {
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        /* Nav Sidebar Links */
+        .nav-link {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: 0;
+            width: 0; height: 1px;
+            background: var(--cyan);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover { color: #fff; }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Neon Buttons */
+        .neon-btn {
+            background: rgba(69, 243, 255, 0.1);
+            border: 1px solid rgba(69, 243, 255, 0.5);
+            color: var(--cyan);
+            padding: 12px 24px;
+            border-radius: 100px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.1);
+            text-align: center;
+        }
+        .neon-btn:hover {
+            background: var(--cyan);
+            color: var(--obsidian);
+            box-shadow: 0 0 30px rgba(69, 243, 255, 0.5);
+        }
+
+        .skill-pill {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            color: #d8b4fe;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: rgba(69, 243, 255, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+    </style>
+</head>
+<body class="selection:bg-[#45f3ff] selection:text-[#0b0c10]">
+
+    <!-- 3D Physics Scene -->
+    <div id="three-canvas"></div>
+
+    <!-- Responsive Vertical Sidebar / Mobile Topbar -->
+    <nav class="fixed top-0 left-0 w-full lg:w-72 lg:h-full z-50 flex flex-row lg:flex-col justify-between items-center lg:items-start px-6 py-4 lg:p-10 bg-[#0b0c10]/50 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-[#45f3ff]/20 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        
+        <!-- Logo Area -->
+        <div class="lg:mb-16">
+            <h1 class="text-2xl md:text-3xl font-bold tracking-widest text-white">V. SHETTY</h1>
+            <h2 class="text-[0.65rem] text-[#45f3ff] uppercase tracking-[0.2em] mt-1 hidden lg:block">Hardware Architect</h2>
+        </div>
+
+        <!-- Desktop Sidebar Links (Hidden on Mobile) -->
+        <div class="hidden lg:flex flex-col gap-8 text-xs font-bold tracking-[0.15em] uppercase text-gray-400 w-full">
+            <a href="#about" class="nav-link w-fit">Identity Profile</a>
+            <a href="#projects" class="nav-link w-fit">System Binaries</a>
+            <a href="#experience" class="nav-link w-fit">Event Logs</a>
+            <a href="#contact" class="nav-link w-fit">Secure Uplink</a>
+        </div>
+
+        <!-- Mobile Horizontal Links -->
+        <div class="flex lg:hidden gap-6 overflow-x-auto text-[0.65rem] sm:text-xs font-bold tracking-widest uppercase text-gray-400">
+            <a href="#about" class="hover:text-white transition-colors whitespace-nowrap">About</a>
+            <a href="#projects" class="hover:text-white transition-colors whitespace-nowrap">Work</a>
+            <a href="#contact" class="hover:text-white transition-colors whitespace-nowrap">Contact</a>
+        </div>
+
+        <!-- CTA Button -->
+        <a href="#contact" class="neon-btn hidden sm:inline-block lg:mt-auto w-auto lg:w-full">Initialize Contact</a>
+    </nav>
+
+    <!-- Main Content Area (Offset on Desktop to make room for Sidebar) -->
+    <main class="relative z-10 pt-28 lg:pt-32 px-6 md:px-12 lg:pl-80 lg:pr-16 max-w-[1600px] mx-auto">
+        
+        <!-- Hero Section -->
+        <section class="min-h-[85vh] flex flex-col justify-center items-center lg:items-start text-center lg:text-left">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-[#8a2be2]/40 bg-[#8a2be2]/10 text-[#d8b4fe] text-[0.65rem] md:text-xs font-bold tracking-widest mb-6 md:mb-8 uppercase backdrop-blur-md">
+                Systems & Hardware Engineer
+            </div>
+            
+            <h1 class="hero-title text-4xl sm:text-6xl md:text-7xl lg:text-[6rem] text-white mb-6">
+                Bridging the <br>
+                <span class="text-gradient">Physical</span> & <br class="lg:hidden">
+                <span class="text-gradient">Digital</span>.
+            </h1>
+            
+            <p class="text-gray-400 text-base md:text-xl font-light leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
+                I specialize in low-level embedded systems, bare-metal microcontroller architectures, and writing brutally optimized C and Python logic.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full sm:w-auto">
+                <a href="#projects" class="neon-btn w-full sm:w-auto">View Projects</a>
+                <a href="#about" class="text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white flex justify-center items-center transition-colors w-full sm:w-auto py-3">
+                    Explore Profile <span class="ml-2">→</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 lg:py-32">
+            <div class="glass-card p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row gap-12 items-center">
+                <div class="w-full sm:w-2/3 lg:w-1/3 relative mx-auto">
+                    <div class="aspect-square rounded-[2rem] overflow-hidden border border-[#45f3ff]/30 relative">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-[#45f3ff]/20 to-[#8a2be2]/20 mix-blend-overlay z-10"></div>
+                        <img src="WhatsApp Image 2026-10-07 at 9.30.26 AM.jpeg" alt="Vishal" class="w-full h-full object-cover filter grayscale contrast-125 hover:grayscale-0 transition-all duration-700">
+                    </div>
+                </div>
+                <div class="w-full lg:w-2/3 text-center lg:text-left">
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">Vishal Shetty</h2>
+                    <p class="text-gray-300 text-sm md:text-lg leading-relaxed mb-6 font-light">
+                        Based in Chikkamagaluru, India, I recently graduated from Adichunchanagiri Institute of Technology (AIT) with a Bachelor of Engineering in Electronics and Communication.
+                    </p>
+                    <p class="text-gray-300 text-sm md:text-lg leading-relaxed mb-8 font-light">
+                        My engineering philosophy revolves around building robust, low-latency systems. Whether it is writing custom low-level device drivers, interfacing sensors over UART protocols, or developing Python scripts to parse hardware diagnostics, I find beauty in code executing seamlessly on bare-metal.
+                    </p>
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-2 md:gap-3">
+                        <span class="skill-pill">Python</span>
+                        <span class="skill-pill">Embedded C</span>
+                        <span class="skill-pill">Linux API</span>
+                        <span class="skill-pill">UART</span>
+                        <span class="skill-pill">OOP</span>
+                        <span class="skill-pill">Algorithms</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section id="projects" class="py-20 lg:py-32">
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 lg:mb-16 text-center text-gradient">System Binaries</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                <!-- Project 1 -->
+                <div class="glass-card p-8 lg:p-10 flex flex-col justify-between h-full">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[#45f3ff] text-[0.65rem] md:text-xs font-bold tracking-widest uppercase">OCT 2023 - DEC 2023</span>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4 text-white">System Performance Monitor</h3>
+                        <p class="text-gray-400 font-light text-sm md:text-base leading-relaxed mb-8">
+                            Engineered a lightweight system monitoring utility using Python and C to track real-time CPU, RAM, and disk utilization. Implemented multi-threaded log handlers to parse diagnostic metrics, improving log write latency by 25%. Automated health alert notifications.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#Python</span>
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#C</span>
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#Linux_API</span>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="glass-card p-8 lg:p-10 flex flex-col justify-between h-full">
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="text-[#45f3ff] text-[0.65rem] md:text-xs font-bold tracking-widest uppercase">JAN 2024 - MAR 2024</span>
+                        </div>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4 text-white">Microcontroller Automation</h3>
+                        <p class="text-gray-400 font-light text-sm md:text-base leading-relaxed mb-8">
+                            Developed custom low-level device drivers in C interfacing sensors over UART protocol with zero packet drops. Optimized memory registers and interrupt-driven data acquisition routines, reducing processor idle current consumption across 50+ test iterations.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#Embedded_C</span>
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#UART</span>
+                        <span class="text-[0.65rem] text-[#8a2be2] uppercase tracking-widest font-bold">#Debugging</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience -->
+        <section id="experience" class="py-20 lg:py-32">
+            <h2 class="text-3xl md:text-5xl font-bold mb-12 lg:mb-16 text-center text-gradient">Event Logs</h2>
+            
+            <div class="glass-card p-8 md:p-12 lg:p-16 relative">
+                <!-- Timeline Line -->
+                <div class="hidden lg:block absolute left-[50%] top-16 bottom-16 w-px bg-gradient-to-b from-[#45f3ff] via-[#8a2be2] to-transparent"></div>
+                
+                <div class="flex flex-col lg:flex-row justify-between w-full mb-12 lg:mb-16 relative">
+                    <div class="lg:w-[45%] text-left lg:text-right mb-4 lg:mb-0">
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Technical Project Intern</h3>
+                        <p class="text-[#45f3ff] text-sm md:text-base font-medium mb-3">Engineering Solutions Lab</p>
+                        <p class="text-gray-400 font-light text-sm leading-relaxed">Wrote modular C & Python routines for testing hardware communication interfaces. Conducted code refactoring across 15+ modules.</p>
+                    </div>
+                    <div class="hidden lg:flex absolute left-1/2 top-2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#45f3ff] shadow-[0_0_15px_#45f3ff]"></div>
+                    <div class="lg:w-[45%] text-left">
+                        <span class="inline-block px-3 py-1 rounded-full border border-gray-700 text-[0.65rem] md:text-xs font-bold tracking-widest text-gray-400 uppercase">AUG 2023 - OCT 2023</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row-reverse justify-between w-full relative">
+                    <div class="lg:w-[45%] text-left mb-4 lg:mb-0">
+                        <h3 class="text-xl md:text-2xl font-bold text-white mb-2">Bachelor of Engineering</h3>
+                        <p class="text-[#8a2be2] text-sm md:text-base font-medium mb-3">Adichunchanagiri Institute of Technology</p>
+                        <p class="text-gray-400 font-light text-sm leading-relaxed">Electronics and Communication Engineering. CGPA: 6.7. Top placement in algorithmic coding challenge using C.</p>
+                    </div>
+                    <div class="hidden lg:flex absolute left-1/2 top-2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#8a2be2] shadow-[0_0_15px_#8a2be2]"></div>
+                    <div class="lg:w-[45%] text-left lg:text-right">
+                        <span class="inline-block px-3 py-1 rounded-full border border-gray-700 text-[0.65rem] md:text-xs font-bold tracking-widest text-gray-400 uppercase">GRADUATED 2024</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="py-20 lg:py-32 text-center">
+            <h2 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 text-white">Establish Connection.</h2>
+            <p class="text-gray-400 text-sm md:text-lg font-light mb-10 md:mb-12 max-w-xl mx-auto">Currently open for new opportunities to build highly optimized hardware-software bridges.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 mb-12 md:mb-16">
+                <a href="mailto:vishalshetty1105@gmail.com" class="glass-card px-6 md:px-10 py-4 md:py-5 text-sm md:text-lg font-medium hover:text-[#45f3ff]">
+                    vishalshetty1105@gmail.com
+                </a>
+                <a href="tel:+917483924817" class="glass-card px-6 md:px-10 py-4 md:py-5 text-sm md:text-lg font-medium hover:text-[#8a2be2]">
+                    +91 7483924817
+                </a>
+            </div>
+            
+            <div class="flex justify-center gap-8 md:gap-10">
+                <a href="https://linkedin.com/in/vishal-shetty-753386440" target="_blank" class="text-[0.65rem] md:text-sm font-bold tracking-widest uppercase text-gray-500 hover:text-white transition-colors">LinkedIn</a>
+                <a href="https://github.com/vishalshetty1105-svg" target="_blank" class="text-[0.65rem] md:text-sm font-bold tracking-widest uppercase text-gray-500 hover:text-white transition-colors">GitHub</a>
+            </div>
+        </section>
+        
+        <footer class="py-8 border-t border-white/5 text-center text-[0.65rem] md:text-xs text-gray-600 font-bold tracking-widest uppercase">
+            © 2026 Vishal Shetty // Glassmorphism Architecture
+        </footer>
+
+    </main>
+
+    <!-- Three.js Implementation -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- Scene Setup ---
+        const container = document.getElementById('three-canvas');
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x0b0c10, 0.03);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.z = window.innerWidth < 768 ? 25 : 20;
+
+        // Container to offset the entire 3D scene on Desktop
+        const mainGroup = new THREE.Group();
+        const isDesktop = window.innerWidth >= 1024;
+        mainGroup.position.x = isDesktop ? 3 : 0; // Shift right to make room for sidebar
+        scene.add(mainGroup);
+
+        // --- Luminous Ambient Lighting ---
+        const ambientLight = new THREE.AmbientLight(0x0b0c10, 2);
+        mainGroup.add(ambientLight);
+
+        const cyanLight = new THREE.PointLight(0x45f3ff, 200, 50);
+        cyanLight.position.set(5, 5, 5);
+        mainGroup.add(cyanLight);
+
+        const uvLight = new THREE.PointLight(0x8a2be2, 200, 50);
+        uvLight.position.set(-5, -5, 5);
+        mainGroup.add(uvLight);
+        
+        const rimLight = new THREE.DirectionalLight(0xffffff, 1);
+        rimLight.position.set(0, 10, -10);
+        mainGroup.add(rimLight);
+
+        // --- High-End Materials ---
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff, metalness: 0.1, roughness: 0.1,
+            transmission: 1.0, ior: 1.5, thickness: 1.0, transparent: true
+        });
+
+        const screenMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x0b0c10, emissive: 0x45f3ff, emissiveIntensity: 0.1,
+            metalness: 0.8, roughness: 0.2, clearcoat: 1.0
+        });
+
+        const metallicMaterial = new THREE.MeshStandardMaterial({
+            color: 0x222222, metalness: 1.0, roughness: 0.3
+        });
+
+        // --- 3D Physics Anti-Gravity Objects ---
+        const objects = [];
+
+        const spawnObject = (mesh, scale) => {
+            mesh.scale.set(scale, scale, scale);
+            mainGroup.add(mesh);
+            
+            const speed = window.innerWidth < 768 ? 0.02 : 0.04;
+            objects.push({
+                mesh: mesh,
+                x: (Math.random() - 0.5) * 15,
+                y: (Math.random() - 0.5) * 10,
+                z: (Math.random() - 0.5) * 10,
+                vx: (Math.random() - 0.5) * speed,
+                vy: (Math.random() - 0.5) * speed,
+                vz: (Math.random() - 0.5) * speed * 0.5,
+                baseRx: Math.random() * Math.PI,
+                baseRy: Math.random() * Math.PI,
+                baseRz: Math.random() * Math.PI,
+                rotSpeedX: (Math.random() - 0.5) * 0.01,
+                rotSpeedY: (Math.random() - 0.5) * 0.01
+            });
+        };
+
+        // Exploded Phone
+        const phoneGroup = new THREE.Group();
+        const backplate = new THREE.Mesh(new THREE.BoxGeometry(3, 6, 0.1), glassMaterial);
+        backplate.position.z = -0.5;
+        const chassis = new THREE.Mesh(new THREE.BoxGeometry(3.1, 6.1, 0.2), metallicMaterial);
+        const screen = new THREE.Mesh(new THREE.BoxGeometry(2.9, 5.9, 0.05), screenMaterial);
+        screen.position.z = 0.5;
+        phoneGroup.add(backplate, chassis, screen);
+        phoneGroup.rotation.x = -Math.PI / 6; phoneGroup.rotation.y = Math.PI / 4;
+        spawnObject(phoneGroup, window.innerWidth < 768 ? 0.8 : 1.2); // Scale down on mobile
+
+        // Crystal & Toruses
+        const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5, 0), glassMaterial);
+        spawnObject(crystal, 1.5);
+
+        for(let i=0; i<3; i++) {
+            const torus = new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.4, 32, 64), metallicMaterial);
+            spawnObject(torus, 1.0);
+        }
+        
+        spawnObject(new THREE.Mesh(new THREE.OctahedronGeometry(1.0, 0), glassMaterial), 1.0);
+        spawnObject(new THREE.Mesh(new THREE.DodecahedronGeometry(1.2, 0), glassMaterial), 1.0);
+
+        // --- Luminous Dust ---
+        const dustGeometry = new THREE.BufferGeometry();
+        const dustCount = window.innerWidth < 768 ? 150 : 400; // Optimize for mobile
+        const dustPos = new Float32Array(dustCount * 3);
+        const dustColors = new Float32Array(dustCount * 3);
+        const colorCyan = new THREE.Color(0x45f3ff);
+        const colorUv = new THREE.Color(0x8a2be2);
+
+        for(let i=0; i<dustCount; i++) {
+            dustPos[i*3] = (Math.random() - 0.5) * 40;
+            dustPos[i*3+1] = (Math.random() - 0.5) * 40;
+            dustPos[i*3+2] = (Math.random() - 0.5) * 40;
+            const mixedColor = Math.random() > 0.5 ? colorCyan : colorUv;
+            dustColors[i*3] = mixedColor.r; dustColors[i*3+1] = mixedColor.g; dustColors[i*3+2] = mixedColor.b;
+        }
+        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        dustGeometry.setAttribute('color', new THREE.BufferAttribute(dustColors, 3));
+        const dustMaterial = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+        const dust = new THREE.Points(dustGeometry, dustMaterial);
+        mainGroup.add(dust);
+
+        // --- Smooth Scroll Rotation ---
+        let targetScrollRot = 0;
+        let currentScrollRot = 0;
+        window.addEventListener('scroll', () => { targetScrollRot = window.scrollY * 0.002; });
+
+        // --- Animation Loop ---
+        const clock = new THREE.Clock();
+        const animate = () => {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            // Calculate dynamic bounds
+            const visibleHeight = 2 * Math.tan( ( Math.PI / 180 ) * camera.fov / 2 ) * camera.position.z;
+            const visibleWidth = visibleHeight * camera.aspect;
+            const boundX = visibleWidth / 2 - 2;
+            const boundY = visibleHeight / 2 - 2;
+
+            currentScrollRot += (targetScrollRot - currentScrollRot) * 0.05;
+
+            cyanLight.position.x = Math.sin(elapsedTime * 0.5) * 10; cyanLight.position.y = Math.cos(elapsedTime * 0.3) * 10;
+            uvLight.position.x = Math.sin(elapsedTime * 0.4 + Math.PI) * 10; uvLight.position.y = Math.cos(elapsedTime * 0.6 + Math.PI) * 10;
+
+            screen.position.z = 0.5 + Math.sin(elapsedTime * 2) * 0.2;
+            backplate.position.z = -0.5 - Math.sin(elapsedTime * 2) * 0.2;
+
+            objects.forEach(obj => {
+                obj.x += obj.vx; obj.y += obj.vy; obj.z += obj.vz;
+                if(obj.x > boundX) { obj.x = boundX; obj.vx *= -1; }
+                if(obj.x < -boundX) { obj.x = -boundX; obj.vx *= -1; }
+                if(obj.y > boundY) { obj.y = boundY; obj.vy *= -1; }
+                if(obj.y < -boundY) { obj.y = -boundY; obj.vy *= -1; }
+                if(obj.z > 5) { obj.z = 5; obj.vz *= -1; }
+                if(obj.z < -10) { obj.z = -10; obj.vz *= -1; }
+
+                obj.mesh.position.set(obj.x, obj.y, obj.z);
+                obj.baseRx += obj.rotSpeedX; obj.baseRy += obj.rotSpeedY;
+                obj.mesh.rotation.x = obj.baseRx + currentScrollRot;
+                obj.mesh.rotation.y = obj.baseRy + currentScrollRot;
+            });
+            
+            dust.rotation.y = elapsedTime * 0.02;
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        // --- Resize Handler ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            // Pull camera back on mobile
+            camera.position.z = window.innerWidth < 768 ? 25 : 20;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            // Re-adjust offset
+            mainGroup.position.x = window.innerWidth >= 1024 ? 3 : 0;
+        });
+    </script>
+</body>
+</html>
